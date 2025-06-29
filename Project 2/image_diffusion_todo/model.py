@@ -17,8 +17,19 @@ class DiffusionModule(nn.Module):
         ######## TODO ########
         # Assignment -- compute noise matching loss.
         B = x0.shape[0]
-        timestep = self.var_scheduler.uniform_sample_t(B, self.device)        
-        loss = x0.mean()
+        timestep = self.var_scheduler.uniform_sample_t(B, self.device)
+        # Generate Gaussian noise if not provided
+        if noise is None:
+            noise = torch.randn_like(x0)
+
+        # Add noise to clean samples (forward process)
+        x_t, noise = self.var_scheduler.add_noise(x0, timestep, noise)
+
+        # Predict noise using the network
+        noise_pred = self.network(x_t, timestep)
+
+        # Compute MSE loss between actual and predicted noise
+        loss = F.mse_loss(noise_pred, noise)
         ######################
         return loss
     

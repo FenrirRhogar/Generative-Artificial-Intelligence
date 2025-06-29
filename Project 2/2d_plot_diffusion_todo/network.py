@@ -83,7 +83,15 @@ class SimpleNet(nn.Module):
 
         ######## TODO ########
         # Assignment -- implement the denoiser model
+        layers = []
+        dims = [dim_in] + dim_hids + [dim_out]
 
+        for i in range(len(dims) - 1):
+            layers.append(TimeLinear(dims[i], dims[i + 1], num_timesteps))
+            if i < len(dims) - 2:
+                layers.append(nn.ReLU())
+
+        self.net = nn.Sequential(*layers)
         ######################
         
     def forward(self, x: torch.Tensor, t: torch.Tensor):
@@ -97,6 +105,10 @@ class SimpleNet(nn.Module):
         """
         ######## TODO ########
         # Assignment -- implement the forward pass of the denoiser
-
+        for layer in self.net:
+            if isinstance(layer, TimeLinear):
+                x = layer(x, t)
+            else:
+                x = layer(x)
         ######################
         return x

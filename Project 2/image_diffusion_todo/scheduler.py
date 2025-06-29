@@ -85,7 +85,21 @@ class DDPMScheduler(BaseScheduler):
 
         ######## TODO ########
         # Assignment -- Implement the DDPM reverse step.
-        sample_prev = None
+        # Get alpha and alpha_cumprod for current timestep
+        alpha_t = self.alphas[t].to(x_t.device)
+        alpha_cumprod_t = self.alphas_cumprod[t].to(x_t.device)
+
+        # Compute deterministic component
+        coef = (1 - alpha_t) / torch.sqrt(1 - alpha_cumprod_t)
+        pred_original = (x_t - coef * eps_theta) / torch.sqrt(alpha_t)
+
+        # Add stochastic noise for t > 0
+        if t > 0:
+            sigma_t = self.sigmas[t].to(x_t.device)
+            noise = torch.randn_like(x_t)
+            sample_prev = pred_original + sigma_t * noise
+        else:
+            sample_prev = pred_original
         #######################
         
         return sample_prev
@@ -117,8 +131,9 @@ class DDPMScheduler(BaseScheduler):
             eps       = torch.randn(x_0.shape, device='cuda')
 
         ######## TODO ########
-        # Assignment -- Implement the DDPM forward step.
-        x_t = None
+        # Assignment -- Implement the forward pass of a Markov chain.
+        alphas_cumprod_t = self._get_teeth(self.alphas_cumprod, t)
+        x_t = torch.sqrt(alphas_cumprod_t) * x_0 + torch.sqrt(1 - alphas_cumprod_t) * eps
         #######################
 
         return x_t, eps
