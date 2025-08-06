@@ -85,15 +85,12 @@ class DDPMScheduler(BaseScheduler):
 
         ######## TODO ########
         # Assignment -- Implement the DDPM reverse step.
-        # Get alpha and alpha_cumprod for current timestep
         alpha_t = self.alphas[t].to(x_t.device)
         alpha_cumprod_t = self.alphas_cumprod[t].to(x_t.device)
 
-        # Compute deterministic component
         coef = (1 - alpha_t) / torch.sqrt(1 - alpha_cumprod_t)
         pred_original = (x_t - coef * eps_theta) / torch.sqrt(alpha_t)
 
-        # Add stochastic noise for t > 0
         if t > 0:
             sigma_t = self.sigmas[t].to(x_t.device)
             noise = torch.randn_like(x_t)

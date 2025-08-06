@@ -47,7 +47,7 @@ def main(args):
     ds_module = AFHQDataModule(
         "./data",
         batch_size=config.batch_size,
-        num_workers=4,
+        num_workers=2,
         max_num_images_per_cat=config.max_num_images_per_cat,
         image_resolution=image_resolution
     )
@@ -126,7 +126,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--train_num_steps",
         type=int,
-        default=100000,
+        default=50000,
         help="the number of model training steps.",
     )
     parser.add_argument("--warmup_steps", type=int, default=200)

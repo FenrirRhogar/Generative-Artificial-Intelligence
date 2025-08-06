@@ -16132,3 +16132,4 @@ Project 2/image_diffusion_todo/data/afhq/val/wild/pixabay_wild_001192.jpg
 Project 2/image_diffusion_todo/data/afhq/val/wild/pixabay_wild_001224.jpg
 *.jpg
 Project 2/image_diffusion_todo/results/diffusion-ddpm-06-28-011733/last.ckpt
+/Project 2/image_diffusion_todo/results
